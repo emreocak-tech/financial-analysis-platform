@@ -11,10 +11,13 @@ from abc import ABC,abstractmethod
 class AbstractOil(ABC):
     def __init__(self):
         super().__init__()
+    @abstractmethod
     def show_information(self):
         pass
+    @abstractmethod
     def show_graph(self):
         pass
+    @abstractmethod
     def machine_learning_model(self):
         pass
 class CrudeOil(AbstractOil):
@@ -67,7 +70,5 @@ class CrudeOil(AbstractOil):
             print(f"Fine was not found try again , Error Code :  {file_error}!")
         except Exception as except_error:
             print(f"There was an generally error try again , Error Code : {except_error}!")
-asd=CrudeOil()
-qwe=asd.machine_learning_model()
-print(qwe[0])
+
 
