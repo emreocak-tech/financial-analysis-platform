@@ -7,5 +7,5 @@ torch
 prophet
 requests
 beautifulsoup4
-google-generativeai
+google-genai
 python-dotenv
