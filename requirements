@@ -1,0 +1,11 @@
+streamlit
+yfinance
+pandas
+numpy
+matplotlib
+torch
+prophet
+requests
+beautifulsoup4
+google-generativeai
+python-dotenv
