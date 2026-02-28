@@ -13,10 +13,11 @@ from dotenv import load_dotenv
 load_dotenv()
 gold_path=os.getenv("GOLD_PATH")
 df=pd.read_csv(gold_path)
-silver=os.getenv("SİLVER_PATH")
+silver=os.getenv("SILVER_PATH")
 silver_df=pd.read_csv(silver)
 platform_gold=os.getenv("PLATFORM_GOLD_FOR_INVESTING")
 from abc import ABC,abstractmethod
+plt.style.use("seaborn-v0_8-darkgrid")
 class AbstractGold(ABC):
     def __init__(self):
         super().__init__()
@@ -35,10 +36,11 @@ class Gold(AbstractGold):
             print(f"The average closing price over the last 30 days {df.tail(30)['Close'].mean()} dollars! ")
             print(f"The average maximum price over the last 30 days : {df.tail(30)['Close'].max()} dollars!")
             print(f"The average minimum price over the last 30 days : {df.tail(30)['Close'].min()} dollars!")
+            return [df.tail(30)['Close'].mean(),df.tail(30)['Close'].max(),df.tail(30)['Close'].min()]
         except ValueError as v_error:
             print(f"There was an value error : Error Code : {v_error}!")
         except FileNotFoundError as file_error:
-            print(f"Fine was not found try again , Error Code :  {file_error}!")
+            print(f"File was not found try again , Error Code :  {file_error}!")
         except Exception as except_error:
             print(f"There was an generally error try again , Error Code : {except_error}!")
     def draw_price(self):
@@ -50,6 +52,7 @@ class Gold(AbstractGold):
             plt.legend()
             plt.grid()
             plt.show()
+            return plt
         except ValueError as v_error:
             print(f"There was an value error : Error Code : {v_error}!")
         except FileNotFoundError as file_error:
@@ -84,6 +87,7 @@ class Gold(AbstractGold):
             rsi = 100 - (100 / (1 + rs))
 
             print(f"The RSI value is {rsi}")
+            return rsi
         except ValueError as v_error:
             print(f"There was an value error : Error Code : {v_error}!")
         except FileNotFoundError as file_error:
@@ -92,14 +96,15 @@ class Gold(AbstractGold):
             print(f"There was an generally error try again , Error Code : {except_error}!")
     def compare_silver(self):
         try:
-            plt.plot(silver_df.tail(14)['Date'], silver_df.tail(14)['Close'], color="Silver", linewidth=4,label="Silver Price")
-            plt.plot(df.tail(14)['Date'], df.tail(14)['Close'], color="Yellow", linewidth=4, label="Gold Price")
+            plt.plot(silver_df.tail(14)['Date'], silver_df.tail(14)['Close'], color="Silver", linewidth=7,label="Silver Price")
+            plt.plot(df.tail(14)['Date'], df.tail(14)['Close'], color="Yellow", linewidth=7, label="Gold Price")
             plt.xlabel("Date", color="Black", fontsize=15)
             plt.ylabel("Prices", color="Black", fontsize=15)
             plt.title("SILVER-GOLD PRICES", color="Black", fontsize=20)
             plt.legend()
             plt.grid()
             plt.show()
+            return plt
         except ValueError as v_error:
             print(f"There was an value error : Error Code : {v_error}!")
         except FileNotFoundError as file_error:
@@ -122,7 +127,7 @@ class Gold(AbstractGold):
             print(f"{ex}")
     def machine_learning_model(self):
         try:
-            values = df['Close'].values
+            values = df['Close'].values.flatten()
             def create_sequences(values, seq_length=60):
                 x = []
                 y = []
@@ -173,16 +178,19 @@ class Gold(AbstractGold):
             y_test_tensor=normalizition(y_test_tensor,maxs_two,mins_two)
             class PredictGold(nn.Module):
              def __init__(self):
-                super().__init__()
-                self.shell1 = nn.Linear(1, 10)
-                self.shell2 = nn.Linear(10, 1)
-                self.relu = nn.ReLU()
-                self.sigmoid = nn.Sigmoid()
+                 super().__init__()
+                 self.shell1 = nn.Linear(60, 128)
+                 self.shell2 = nn.Linear(128, 64)
+                 self.shell3 = nn.Linear(64, 1)
+                 self.relu = nn.ReLU()
+                 self.dropout = nn.Dropout(0.2)
              def forward(self, x):
-                x = self.shell1(x)
-                x = self.relu(x)
-                x = self.shell2(x)
-                return x
+                 x = x.view(x.size(0), -1)
+                 x = self.relu(self.shell1(x))
+                 x = self.dropout(x)
+                 x = self.relu(self.shell2(x))
+                 x = self.shell3(x)
+                 return x
             model=PredictGold()
             optimizer=optim.Adam(model.parameters(),lr=0.01)
             criterion=nn.MSELoss()
@@ -196,7 +204,6 @@ class Gold(AbstractGold):
                 if epoch % 100 == 0:
                     print(f"The loss value is {loss.item()}")
                     loss_values.append(loss.item())
-            plt.scatter(loss_values, color="Black")
             model.eval()
             loss_two_list=[]
             with torch.no_grad():
@@ -204,8 +211,24 @@ class Gold(AbstractGold):
                 loss2=criterion(prediction1,y_test_tensor)
                 print(f"The loss value is {loss2.item()}")
                 loss_two_list.append(loss2.item())
-            plt.scatter(loss_two_list,color="Black")
+
             plt.show()
+            son_60_gun = values[-60:]  # son 60 günlük fiyatlar
+
+            # Tensor'a çevir
+            son_60_tensor = torch.FloatTensor(son_60_gun).unsqueeze(0).unsqueeze(-1)  # (1, 60, 1)
+
+            # Normalize et
+            son_60_normalized = (son_60_tensor - mins_one) / (maxs_one - mins_one)
+
+            # Tahmin yap
+            with torch.no_grad():
+                tahmin_normalized = model(son_60_normalized)
+                # Gerçek fiyata çevir
+                tahmin = tahmin_normalized * (maxs_two - mins_two) + mins_two
+            print(tahmin)
+            return tahmin.item()
+
         except FileNotFoundError as file_error:
             print(f"The file was found , Error Code : {file_error}")
         except ValueError as v_error:
@@ -213,7 +236,8 @@ class Gold(AbstractGold):
         except Exception as except_error:
             print(f"Exception value : {except_error}")
 
-
+asd=Gold()
+asd.machine_learning_model()
 
 
 

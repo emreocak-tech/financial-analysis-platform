@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 crude_oil_path=os.getenv("CRUDE_OIL")
 df=pd.read_csv(crude_oil_path)
+plt.style.use("seaborn-v0_8-darkgrid")
 from abc import ABC,abstractmethod
 class AbstractOil(ABC):
     def __init__(self):
@@ -26,6 +27,7 @@ class CrudeOil(AbstractOil):
             print(f"The average closing price over the last 30 days {df.tail(30)['price'].mean()} dollars! ")
             print(f"The average maximum price over the last 30 days : {df.tail(30)['price'].max()} dollars!")
             print(f"The average minimum price over the last 30 days : {df.tail(30)['price'].min()} dollars!")
+            return [df.tail(30)['price'].mean(), df.tail(30)['price'].max(), df.tail(30)['price'].min()]
         except ValueError as v_error:
             print(f"There was an value error : Error Code : {v_error}!")
         except FileNotFoundError as file_error:
@@ -41,6 +43,7 @@ class CrudeOil(AbstractOil):
             plt.legend()
             plt.grid()
             plt.show()
+            return plt
         except ValueError as v_error:
             print(f"There was an value error : Error Code : {v_error}!")
         except FileNotFoundError as file_error:

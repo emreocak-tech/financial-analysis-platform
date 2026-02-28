@@ -13,6 +13,7 @@ silver_path=os.getenv("SILVER_PATH")
 df=pd.read_csv(silver_path)
 oil_path=os.getenv("CRUDE_OIL")
 oil_df=pd.read_csv(oil_path)
+plt.style.use("seaborn-v0_8-darkgrid")
 """
 specific_date = '2026-01-13'
 filtered_data = df[df['Date'] == specific_date]['Close']
@@ -37,6 +38,7 @@ class Silver(AbstractSilver):
             print(f"The average closing price over the last 30 days {df.tail(30)['Close'].mean()} dollars! ")
             print(f"The average maximum price over the last 30 days : {df.tail(30)['Close'].max()} dollars!")
             print(f"The average minimum price over the last 30 days : {df.tail(30)['Close'].min()} dollars!")
+            return [df.tail(30)['Close'].mean(),df.tail(30)['Close'].max(),df.tail(30)['Close'].min()]
         except ValueError as v_error:
             print(f"There was an value error : Error Code : {v_error}!")
         except FileNotFoundError as file_error:
@@ -52,6 +54,7 @@ class Silver(AbstractSilver):
             plt.grid()
             plt.legend()
             plt.show()
+            return plt
         except ValueError as v_error:
             print(f"There was an value error : Error Code : {v_error}!")
         except TypeError as type_error:
@@ -90,6 +93,8 @@ class Silver(AbstractSilver):
             rsi_value = 100 - (100 / (1 + rs))
 
             print(f"The RSI value of silver is {rsi_value}")
+
+            return rsi_value
         except ValueError as v_error:
             print(f"There was an value error : Error Code : {v_error}!")
         except FileNotFoundError as file_error:
@@ -106,6 +111,7 @@ class Silver(AbstractSilver):
             plt.legend()
             plt.grid()
             plt.show()
+            return plt
         except ValueError as v_error:
             print(f"There was an value error : Error Code : {v_error}!")
         except FileNotFoundError as file_error:
@@ -114,13 +120,13 @@ class Silver(AbstractSilver):
             print(f"There was an generally error try again , Error Code : {except_error}!")
     def model_silver(self):
         try:
-            values=df['Close'].values
+            values=df['Close'].values.flatten()
             def create_sequences(values,seq_length=3):
                 x=[]
                 y=[]
                 for i in range(len(values)-seq_length):
                     prices=values[i:i+seq_length]
-                    target=values[i+3]
+                    target=values[i+seq_length]
                     x.append(prices)
                     y.append(target)
                 return np.array(x),np.array(y)
@@ -164,7 +170,7 @@ class Silver(AbstractSilver):
                     self.lstm = nn.LSTM(1, 10, batch_first=True)
                     self.shell1 = nn.Linear(10, 1)
                 def forward(self, x):
-                    x = self.lstm(x)
+                    x,_ = self.lstm(x)
                     x = x[:, -1, :]
                     x = self.shell1(x)
                     return x
@@ -185,6 +191,15 @@ class Silver(AbstractSilver):
                 loss = criterion(prediction, y_test_tensor)
                 print(f"The test loss value is {loss.item()}")
                 print("The model was educated successfully !")
+            son_3_gun = values[-3:]
+            son_3_tensor = torch.FloatTensor(son_3_gun).unsqueeze(0).unsqueeze(-1)
+            son_3_normalized = (son_3_tensor - mins_one) / (maxs_one - mins_one)
+            with torch.no_grad():
+                tahmin_normalized = model(son_3_normalized)
+                tahmin = tahmin_normalized * (maxs_two - mins_two) + mins_two
+            print(f"Predicted price: {tahmin.item()}")
+            return tahmin.item()
+
         except ValueError as v_error:
             print(f"There was an value error : Error Code : {v_error}!")
         except FileNotFoundError as file_error:

@@ -7,6 +7,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import requests
 import torch
+import datetime
 import torch.nn as nn
 import torch.optim as optim
 from bs4 import BeautifulSoup
@@ -14,6 +15,7 @@ from prophet import Prophet
 from google import genai
 from google.genai import types
 from abc import ABC,abstractmethod
+plt.style.use("seaborn-v0_8-darkgrid")
 start_date=os.getenv("START_DAY")
 end_date=os.getenv("END_DAY")
 api_key=os.getenv("GOOGLE_GEMİNİ")
@@ -21,44 +23,46 @@ class AbstractClass(ABC):
     def __init__(self):
         super().__init__()
     @abstractmethod
-    def analyze(self):
+    def analyze(self,sembol):
         pass
     @abstractmethod
-    def show_graph(self):
+    def show_graph(self,sembol,sembol2,sembol3):
         pass
     @abstractmethod
     def gemini_integration(self):
         pass
     @abstractmethod
-    def your_model_result(self):
+    def your_model_result(self,sembol,num):
         pass
 class StockMarket(AbstractClass):
-    def analyze(self):
+    def analyze(self,sembol):
         try:
-            df=yf.download(tickers="AAPL",start=start_date,end=end_date,interval="1d")
-            print(f"The average closing price over the last 30 days : {df['Close'].mean()}")
-            print(f"The average maximum price over the last 30 days : {df['Close'].max()}")
-            print(f"The average minimum price over the last 30 days : {df['Close'].min()}")
+            df=yf.download(tickers=sembol,start=start_date,end=end_date,interval="1d")
+            print(f"The average closing price over the last 365 days : {df['Close'].mean()}")
+            print(f"The average maximum price over the last 365 days : {df['Close'].max()}")
+            print(f"The average minimum price over the last 365 days : {df['Close'].min()}")
+            return [df['Close'].mean(),df['Close'].max(),df['Close'].min()]
         except ConnectionError as connect_error:
             print(f"Connection Error : {connect_error}")
         except TimeoutError as time_error:
             print(f"Timeout Error : {time_error}")
         except Exception as except_error:
             print(f"Exception value : {except_error}")
-    def show_graph(self):
+    def show_graph(self,sembol1,sembol2,sembol3):
         try:
-            df = yf.download("NVDA", interval="1d", start=start_date, end=end_date)
-            df2 = yf.download("AAPL", interval="1d", start=start_date, end=end_date)
-            df3 = yf.download("ASELS.IS", interval="1d", start=start_date, end=end_date)
-            plt.plot(df.index, df['Close'], linewidth=3, color="Green", label="NVDIA Price")
-            plt.plot(df2.index, df2['Close'], linewidth=3, color="Silver", label="AAPL Price")
-            plt.plot(df3.index, df3['Close'], linewidth=3, color="Blue", label="ASELS Price")
+            df = yf.download(sembol1, interval="1d", start=start_date, end=datetime.datetime.now())
+            df2 = yf.download(sembol2, interval="1d", start=start_date, end=datetime.datetime.now())
+            df3 = yf.download(sembol3, interval="1d", start=start_date, end=datetime.datetime.now())
+            plt.plot(df.index, df['Close'], linewidth=3, color="Green", label=f"{sembol1}")
+            plt.plot(df2.index, df2['Close'], linewidth=3, color="Silver", label=f"{sembol2}")
+            plt.plot(df3.index, df3['Close'], linewidth=3, color="Blue", label=f"{sembol3}")
             plt.xlabel("Date", fontsize=15, color="Black")
             plt.ylabel("Price", color="Black", fontsize=15)
-            plt.title("NVDIA PRICE vs AAPL PRICE", fontsize=20, color="Black")
+            plt.title(f"{sembol1} PRICE vs {sembol2} PRICE vs {sembol3} PRICE", fontsize=20, color="Black")
             plt.legend(fontsize=10)
             plt.grid(True)
             plt.show()
+            return plt
         except ConnectionError as connect_error:
             print(f"Connection Error : {connect_error}")
         except TimeoutError as time_error:
@@ -81,16 +85,16 @@ class StockMarket(AbstractClass):
             print(f"Timeout Error : {time_error}")
         except Exception as except_error:
             print(f"Exception value : {except_error}")
-    def your_model_result(self):
+    def your_model_result(self,sembol,num):
         try:
-            df=yf.download("AAPL",interval="1d",start=start_date,end=end_date)
-            values=df['Close'].values
+            df=yf.download(sembol,interval="1d",start=start_date,end=end_date)
+            values=df['Close'].values.flatten()
             def create_sequences(values,seq_length=3):
                 x=[]
                 y=[]
                 for i in range(len(values)-seq_length):
                     prices=values[i:i+seq_length]
-                    target=values[i+3]
+                    target=values[i+seq_length]
                     x.append(prices)
                     y.append(target)
                 return np.array(x),np.array(y)
@@ -156,6 +160,12 @@ class StockMarket(AbstractClass):
                 loss=criterion(prediction,y_test_tensor)
                 print(f"The test loss value is {loss.item()}")
             print("The model was educated successfully !")
+            son_3_gun = values[-3:]
+            son_3_tensor = torch.FloatTensor(son_3_gun).unsqueeze(0).unsqueeze(-1)
+            son_3_normalized = (son_3_tensor - mins_one) / (maxs_one - mins_one)
+            tahmin_normalized = model(son_3_normalized)
+            tahmin = tahmin_normalized * (maxs_two - mins_two) + mins_two
+            return tahmin.item()
         except ConnectionError as internet_error:
             print(f"YFinance API Error : {internet_error}")
         except ValueError as v_error:
@@ -163,9 +173,9 @@ class StockMarket(AbstractClass):
         except Exception as except_error:
             print(f"Exception value : {except_error}")
 class AdvancedPrediction:
-    def make_a_prediction(self):
+    def make_a_prediction(self,sembol):
         try:
-            df = yf.download("ASELS.IS", interval="1d", start=start_date, end=end_date)
+            df = yf.download(sembol, interval="1d", start="2026-2-1", end=datetime.datetime.now())
             df = df[['Close']].reset_index()
             df.columns = ['ds', 'y']
             df = df.dropna()
@@ -181,5 +191,4 @@ class AdvancedPrediction:
             print(f"Shape of value is not comfort for this project , check again  : {v_error}")
         except Exception as except_error:
             print(f"Exception value : {except_error}")
-
 

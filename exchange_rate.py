@@ -11,6 +11,7 @@ from google.genai import types
 load_dotenv()
 import os
 from abc import ABC,abstractmethod
+plt.style.use("seaborn-v0_8-darkgrid")
 api_key=os.getenv("API_KEY")
 google_gemini_key=os.getenv("GOOGLE_GEMİNİ")
 turkish_lira=[16.58,23.73,32.51,42.0,44.0]
@@ -52,6 +53,7 @@ class Forex(AbstractForex):
             response=requests.get(url=url)
             data=response.json()
             print(f"1 dolar = {data['conversion_rates']['TRY']} turkish lira !")
+            return data['conversion_rates']['TRY']
         except ConnectionError as ce_error:
             print(f"Bağlantı hatası: {ce_error}")
         except requests.exceptions.Timeout as time_error:
@@ -60,11 +62,12 @@ class Forex(AbstractForex):
             print(f"Genel hata: {ex_error}")
     def analyze_price(self):
         try:
-            plt.scatter(years,turkish_lira,color="Black",linewidth=3,label="USD/TRY Values")
+            plt.plot(years,turkish_lira,color="Black",linewidth=3,label="USD/TRY Values")
             plt.title("USD-TRY GRAPH",fontsize=20,color="Black")
             plt.legend()
             plt.grid(True)
             plt.show()
+            return plt
         except Exception as except_er:
             print(f"It is a comman error value : {except_er}")
     def lineer_model(self):
@@ -84,11 +87,11 @@ class Forex(AbstractForex):
         result = model.forward(prediction_data)
         result=result.view(-1,1)
         print(f"The probability of the dollar being 47 TL is %{result*100}%.")
+        return result.item()
 class HelpfulUtils:
-    def genai_gemini(self):
+    def genai_gemini(self,text):
         try:
             client = genai.Client(api_key=google_gemini_key)
-            text = input("Send a message : ")
             response = client.models.generate_content(
                 model="gemini-3-flash-preview",
                 config=types.GenerateContentConfig(
@@ -96,15 +99,10 @@ class HelpfulUtils:
                 contents=text
             )
             print(response.text)
+            return response.text
         except ConnectionError as internet_error:
             print(f"YFinance API Error : {internet_error}")
         except ValueError as v_error:
             print(f"Shape of value is not comfort for this project , check again  : {v_error}")
         except Exception as except_error:
             print(f"Exception value : {except_error}")
-forex=Forex()
-forex.print_price()
-forex.analyze_price()
-forex.lineer_model()
-utils=HelpfulUtils()
-utils.genai_gemini()
