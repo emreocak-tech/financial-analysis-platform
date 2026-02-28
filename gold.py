@@ -15,7 +15,6 @@ gold_path=os.getenv("GOLD_PATH")
 df=pd.read_csv(gold_path)
 silver=os.getenv("SILVER_PATH")
 silver_df=pd.read_csv(silver)
-platform_gold=os.getenv("PLATFORM_GOLD_FOR_INVESTING")
 from abc import ABC,abstractmethod
 plt.style.use("seaborn-v0_8-darkgrid")
 class AbstractGold(ABC):
@@ -111,20 +110,6 @@ class Gold(AbstractGold):
             print(f"Fine was not found try again , Error Code :  {file_error}!")
         except Exception as except_error:
             print(f"There was an generally error try again , Error Code : {except_error}!")
-    def now_price(self):
-        try:
-            response=requests.get(url=platform_gold,timeout=10)
-            html_sayfa=BeautifulSoup(response.content,"html.parser")
-            price_one=html_sayfa.find("div",class_="text-5xl/9 font-bold text-[#232526] md:text-[42px] md:leading-[60px]")
-            price_two=html_sayfa.find("div",class_="text-5xl/9 font-bold text-[#232526] md:text-[42px] md:leading-[60px] bg-negative-light")
-            price_three=html_sayfa.find("div",class_="text-5xl/9 font-bold text-[#232526] md:text-[42px] md:leading-[60px] bg-positive-light")
-            print(f"The current price of gold is {price_one.text}")
-            print(f"The current price of gold is {price_two.text}")
-            print(f"The current price of gold is {price_three.text}")
-        except ConnectionError as connect_error:
-            print(f"There was an connect error , Error Code : {connect_error}")
-        except Exception as ex:
-            print(f"{ex}")
     def machine_learning_model(self):
         try:
             values = df['Close'].values.flatten()

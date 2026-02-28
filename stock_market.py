@@ -18,7 +18,7 @@ from abc import ABC,abstractmethod
 plt.style.use("seaborn-v0_8-darkgrid")
 start_date=os.getenv("START_DAY")
 end_date=os.getenv("END_DAY")
-api_key=os.getenv("GOOGLE_GEMİNİ")
+api_key=os.getenv("GOOGLE_GEMINI")
 class AbstractClass(ABC):
     def __init__(self):
         super().__init__()

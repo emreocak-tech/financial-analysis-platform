@@ -13,7 +13,7 @@ import os
 from abc import ABC,abstractmethod
 plt.style.use("seaborn-v0_8-darkgrid")
 api_key=os.getenv("API_KEY")
-google_gemini_key=os.getenv("GOOGLE_GEMİNİ")
+google_gemini_key=os.getenv("GOOGLE_GEMINI")
 turkish_lira=[16.58,23.73,32.51,42.0,44.0]
 statics=[0.29,0.34,0.48,0.72,0.66]
 statics_tensor=torch.tensor(statics,dtype=torch.float32).view(-1,1)
