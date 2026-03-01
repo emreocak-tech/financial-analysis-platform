@@ -1,3 +1,5 @@
+**ENGLISH**
+
 📈 FinanScribe: Advanced Financial Forecasting & Scalable ML Architecture
 FinanScribe is a high-performance financial analysis platform engineered with a modular Object-Oriented Programming (OOP) approach. It integrates Deep Learning (PyTorch), statistical forecasting (FB Prophet), and Generative AI (Gemini 3-Flash) to provide actionable insights into stocks, commodities (Gold, Silver, Crude Oil), and forex markets.
 
@@ -61,7 +63,7 @@ This project is for educational and portfolio purposes only. The predictions gen
 
 
 
-
+**TÜRKÇE**
 
 
 
