@@ -50,7 +50,7 @@ Bash
 docker build -t finanscribe .
 docker run -p 8501:8501 finanscribe
 Local Setup
-Clone the repo: git clone <your-repo-url>
+Clone the repo: git clone https://github.com/emreocak-tech/financial-analysis-platform
 
 Install dependencies: pip install -r requirements.txt
 
@@ -107,7 +107,7 @@ Bash
 docker build -t finanscribe .
 docker run -p 8501:8501 finanscribe
 Yerel Geliştirme Ortamı
-Depoyu klonlayın: git clone <repo-url>
+Depoyu klonlayın: git clone https://github.com/emreocak-tech/financial-analysis-platform
 
 Bağımlılıkları yükleyin: pip install -r requirements.txt
 
