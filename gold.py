@@ -221,8 +221,7 @@ class Gold(AbstractGold):
         except Exception as except_error:
             print(f"Exception value : {except_error}")
 
-asd=Gold()
-asd.machine_learning_model()
+
 
 
 
