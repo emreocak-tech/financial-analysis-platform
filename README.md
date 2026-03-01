@@ -1,52 +1,58 @@
-📈 FinanScribe: Scalable Financial Analysis & ML Forecasting
-FinanScribe, finansal verileri (Hisse Senetleri, Emtialar, Döviz) analiz etmek ve geleceğe yönelik fiyat tahminleri üretmek amacıyla geliştirilmiş, modüler ve genişletilebilir bir analiz platformudur. Proje, temiz kod prensipleri ve sağlam bir yazılım mimarisi üzerine inşa edilmiştir.
+📈 FinanScribe: Advanced Financial Forecasting & Scalable ML Architecture
+FinanScribe, modern yazılım mimarisi prensipleriyle inşa edilmiş; hisse senetleri, emtialar (Altın, Gümüş, Petrol) ve döviz kurları üzerinde derinlemesine analizler yapan bir FinTech projesidir. Proje, sadece veri görselleştirme değil, PyTorch tabanlı yapay sinir ağları ve Facebook Prophet ile zaman serisi tahmini yeteneklerini tek bir çatıda birleştirir.
 
 Uygulamanın Linki : https://ai-financial-analyzer-dao9ilbkgbbd26bmxp4zob.streamlit.app/
 
-🎯 Projenin Amacı ve Teknik Vizyonu
-Bu proje, sadece bir tahmin aracı değil; karmaşık finansal verilerin nasıl yapılandırılabileceğini, farklı tahmin modellerinin (Deep Learning & İstatistiksel) aynı çatı altında nasıl yönetilebileceğini gösteren bir mühendislik çalışmasıdır.
+🛠️ Teknik Yetkinlikler ve Mimari (Key Technical Skills)
+Bu proje, bir yazılım mühendisinin sahip olması gereken temel modern yetkinlikleri sergilemek amacıyla geliştirilmiştir:
 
-Temel Yetkinlikler:
-Mimari Tasarım: Proje, tamamen Abstract Base Classes (ABC) kullanılarak tasarlanmıştır. Bu sayede yeni bir varlık sınıfı (örneğin Kripto Paralar) sisteme sadece birkaç satır kodla entegre edilebilir.
+OOP & Yazılım Tasarımı: Proje tamamen Soyut Sınıflar (Abstract Base Classes) üzerine kurulmuştur. Modüler yapısı sayesinde yeni finansal araçlar (Kripto paralar vb.) sisteme minimum eforla entegre edilebilir.
 
-Hibrit ML Yaklaşımı: * PyTorch (ANN): Geçmiş verilerdeki non-lineer ilişkileri öğrenen yapay sinir ağları.
+Hibrit Makine Öğrenmesi (ML): * PyTorch (ANN): Geçmiş fiyat hareketlerindeki karmaşık, non-lineer ilişkileri öğrenmek için tasarlanmış özel katmanlı yapay sinir ağları.
 
-FB Prophet: Mevsimsellik (seasonality) ve tatil etkilerini hesaplayan istatistiksel modelleme.
+FB Prophet: Pazar trendlerini, yıllık/aylık mevsimselliği ve tatil etkilerini analiz eden istatistiksel modeller.
 
-LLM Entegrasyonu: Gemini 3-Flash API kullanılarak, teknik analiz verilerinin "Economy Professor" personasıyla anlamlı raporlara dönüştürülmesi.
+LLM Entegrasyonu: Google Gemini 3-Flash API kullanılarak, elde edilen teknik verilerin doğal dil işleme (NLP) ile profesyonel bir finansal rapora dönüştürülmesi sağlanmıştır.
 
+Versiyon Kontrolü (Git): Projenin geliştirme süreci boyunca Git aktif olarak kullanılmış; kodun gelişimi, değişiklik geçmişi ve versiyon takibi disiplinli bir şekilde yönetilmiştir.
 
-🛠️ Teknoloji Yığını (Tech Stack)AlanKullanılan TeknolojilerDilPython 3.11ArayüzStreamlitMakine ÖğrenmesiPyTorch, FB ProphetVeri İşlemePandas, NumPy, YFinanceGörselleştirmeMatplotlib (Seaborn-style)KonteynırlaştırmaDockerYapay ZekaGoogle Gemini Generative AI
+Konteynırlaştırma: Dockerfile eklenerek projenin her ortamda (Local, Cloud, VPS) izole ve hatasız çalışması garanti altına alınmıştır.
 
+🚀 Teknoloji Yığını (Tech Stack)
+Dil: Python 3.11
 
-🏗️ Proje Yapısı ve Tasarım Desenleri
-Proje, SOLID prensiplerine uygun olarak modüler bir yapıda kurgulanmıştır:
+UI Framework: Streamlit
 
-AbstractClass & AbstractOil: Polimorfizm kullanılarak tüm finansal araçlar için ortak bir arayüz tanımlandı.
+Analiz & Tahmin: PyTorch, Prophet, Pandas, NumPy, YFinance
 
-Encapsulation: Veri çekme, işleme ve modelleme mantıkları birbirinden tamamen izole edildi.
+Yapay Zeka: Gemini AI API
 
-Error Handling: API limitleri, dosya bulunamadı hataları ve veri uyumsuzlukları için kapsamlı try-except blokları uygulandı.
+DevOps: Docker, Git (Version Control), Streamlit Cloud
 
+📦 Kurulum ve Çalıştırma
+Docker ile Hızlı Başlatma
+Projenin tüm bağımlılıklarıyla birlikte tek komutla çalışması için:
 
-🐳 Dağıtım ve Çalıştırma
-Docker ile Çalıştırma
-Projeyi herhangi bir bağımlılık kurmadan doğrudan ayağa kaldırabilirsiniz:
+Bash
 docker build -t finanscribe .
 docker run -p 8501:8501 finanscribe
+Yerel Geliştirme Ortamı
+Depoyu klonlayın: git clone <repo-url>
 
-Yerel Kurulum
-.env dosyanızı oluşturun (API anahtarları ve dosya yolları).
+Bağımlılıkları yükleyin: pip install -r requirements.txt
 
-pip install -r requirements.txt komutunu çalıştırın.
+.env dosyasını oluşturun ve gerekli API anahtarlarını tanımlayın.
 
-streamlit run ui.py ile uygulamayı başlatın.
+Uygulamayı başlatın: streamlit run ui.py
 
-📊 Örnek Çıktılar
-Forex Analizi: PyTorch modeli ile dolar kuru olasılık hesaplamaları.
+📂 Proje Yapısı
+AbstractClass.py: Finansal araçlar için standart arayüzü (blueprint) tanımlar.
 
-Stock Market: Prophet ile 360 günlük trend projeksiyonları.
+stock_market.py & crude_oil.py ...: Veri çekme ve modelleme mantığının izole edildiği sınıflar.
 
-Commodity: Altın, gümüş ve petrol için 30 günlük hareketli ortalamalar ve volatilite analizleri.
+ui.py: Kullanıcı etkileşimi ve görselleştirme katmanı.
 
-Not: Bu proje bir yatırım aracı değil, bir veri bilimi ve yazılım mimarisi örneğidir.
+Dockerfile: Uygulamanın konteynır mimarisi.
+
+⚖️ Yasal Uyarı
+Bu proje teknik bir portfolyo çalışmasıdır. İçerdiği tahminler ve analizler kesinlikle yatırım tavsiyesi değildir. Finansal kayıplardan uygulama geliştiricisi sorumlu tutulamaz.
